@@ -3,536 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraCare - বাংলা এআই অ্যাসিস্ট্যান্ট</title>
-    
-    <!-- 📱 ফেসবুক বা চ্যাটজিপিটির মতো অ্যাপ আইকন ও ম্যানিফেস্ট লিঙ্ক -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icon.png" type="image/png">
-    <meta name="theme-color" content="#2563eb">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
+    <title>AuraCare - দাদুর সঙ্গী</title>
     <style>
-        /* 🎨 গ্লোবাল স্টাইল ও প্রিমিয়াম ব্যাকগ্রাউন্ড গ্রেডিয়েন্ট */
-        body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%); 
-            min-height: 100vh;
-            text-align: center; 
-            padding: 40px 15px; 
-            margin: 0; 
-            color: #1e293b;
-        }
-
-        /* 🧼 গ্লাস-মরফিজম কন্টেইনার */
-        .container { 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 35px 25px; 
-            border-radius: 24px; 
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); 
-            max-width: 550px; 
-            margin: 0 auto; 
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
-
-        h1 { 
-            color: #0f172a; 
-            font-size: 32px; 
-            margin: 0 0 8px 0; 
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        
-        .subtitle { 
-            color: #475569; 
-            font-size: 15px; 
-            margin-bottom: 30px; 
-            font-weight: 500;
-            line-height: 1.5;
-        }
-        
-        /* 🔐 মডার্ন সেটআপ ও লগইন ফরম */
-        .auth-box { 
-            background: rgba(255, 255, 255, 0.6); 
-            padding: 25px; 
-            border-radius: 16px; 
-            text-align: left; 
-            border: 1px solid rgba(255, 255, 255, 0.7);
-        }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { 
-            display: block; 
-            font-weight: 600; 
-            margin-bottom: 8px; 
-            color: #334155; 
-            font-size: 14px; 
-        }
-        .form-group input { 
-            width: 100%; 
-            padding: 12px 16px; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 10px; 
-            box-sizing: border-box; 
-            font-size: 15px; 
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-        .btn-submit { 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-            color: white; 
-            border: none; 
-            padding: 14px; 
-            width: 100%; 
-            border-radius: 10px; 
-            font-size: 16px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-        }
-        .btn-submit:hover { 
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
-        }
-
-        /* 📊 প্রধান ড্যাশবোর্ড (শুরুতে লুকানো থাকবে) */
-        #main-dashboard { display: none; }
-
-        /* 🎙️ বয়স্ক-বান্ধব বড় কন্ট্রোল বাটন */
-        .btn-mic { 
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
-            color: white; 
-            border: none; 
-            padding: 16px 35px; 
-            font-size: 19px; 
-            border-radius: 50px; 
-            cursor: pointer; 
-            font-weight: 700; 
-            transition: all 0.3s ease; 
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
-        }
-        .btn-mic:hover { 
-            transform: scale(1.03);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
-        }
-        
-        .btn-emergency { 
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
-            color: white; 
-            border: none; 
-            padding: 15px; 
-            font-size: 22px; 
-            border-radius: 50%; 
-            width: 130px; 
-            height: 130px; 
-            cursor: pointer; 
-            margin-top: 20px; 
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); 
-            font-weight: 800; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        .btn-emergency:hover { 
-            transform: scale(1.08); 
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.7); 
-        }
-        
-        .btn-perm { 
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            font-size: 15px; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            margin-bottom: 25px; 
-            font-weight: 700; 
-            display: none; 
-            width: 100%; 
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
-        }
-        .btn-logout { 
-            background-color: #f1f5f9; 
-            color: #64748b; 
-            border: 1px solid #e2e8f0; 
-            padding: 6px 12px; 
-            font-size: 13px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            float: right; 
-            font-weight: 600;
-            transition: 0.2s;
-        }
-        .btn-logout:hover {
-            background-color: #fee2e2;
-            color: #ef4444;
-            border-color: #fca5a5;
-        }
-        
-        #status { margin-top: 18px; font-weight: 700; color: #64748b; font-size: 16px; }
-        
-        /* 💬 স্পীচ রেসপন্স বক্স */
-        #ai-response { 
-            margin-top: 25px; 
-            padding: 18px; 
-            background-color: #f8fafc; 
-            border-radius: 16px; 
-            display: none; 
-            text-align: left; 
-            font-size: 16px; 
-            border-left: 5px solid #10b981; 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-        
-        /* 📊 ড্যাশবোর্ড গ্রিড */
-        .section-title { 
-            font-size: 20px; 
-            color: #0f172a; 
-            margin-top: 40px; 
-            margin-bottom: 18px; 
-            text-align: left; 
-            font-weight: 700; 
-            border-bottom: 2px solid #e2e8f0; 
-            padding-bottom: 8px; 
-        }
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .card { 
-            background: #ffffff; 
-            padding: 18px; 
-            border-radius: 14px; 
-            border: 1px solid #e2e8f0; 
-            text-align: center; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
-        }
-        .card h3 { margin: 0 0 8px 0; font-size: 14px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-        .card p { margin: 0; font-size: 26px; font-weight: 800; }
-        .card.pulse p { color: #ef4444; }
-        .card.bp p { color: #10b981; }
-
-        /* 📋 ওষুধ টেবিল স্টাইল */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; }
-        th, td { padding: 14px 16px; text-align: left; font-size: 14px; }
-        th { background-color: #f8fafc; color: #475569; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
-        td { border-bottom: 1px solid #f1f5f9; color: #334155; }
-        .status-badge { padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; display: inline-block; }
-        .done { background-color: #d1fae5; color: #065f46; }
-        .pending { background-color: #fef3c7; color: #92400e; }
-
-        /* 🏥 হাসপাতাল ডিরেক্টরি কার্ড */
-        .hospital-list { display: flex; flex-direction: column; gap: 12px; text-align: left; }
-        .hospital-card { 
-            background: #ffffff; 
-            padding: 16px 20px; 
-            border-radius: 14px; 
-            border: 1px solid #e2e8f0; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            transition: transform 0.2s;
-        }
-        .hospital-card:hover { transform: translateY(-2px); }
-        .hospital-card h4 { margin: 0 0 6px 0; color: #0f172a; font-size: 16px; }
-        .hospital-card p { margin: 0; font-size: 13px; color: #64748b; }
-        .btn-call { 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-            color: white; 
-            text-decoration: none; 
-            padding: 10px 18px; 
-            border-radius: 8px; 
-            font-size: 13px; 
-            font-weight: 700; 
-            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
-        }
+        /* CSS স্টাইল */
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f7f6; }
+        .container { max-width: 500px; margin: auto; }
+        .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .btn { padding: 15px; border: none; border-radius: 15px; background-color: #4a90e2; color: white; font-size: 14px; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background-color: #357abd; }
+        #chat-box { height: 300px; background: white; padding: 15px; border-radius: 10px; overflow-y: scroll; margin-bottom: 10px; border: 1px solid #ddd; }
+        #user-input { width: 70%; padding: 10px; }
+        #send-btn { padding: 10px 20px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>AuraCare AI 🧓✨</h1>
+    <h2>স্বাগতম, দাদু! 🌟</h2>
     
-    <!-- ================= 🔐 সেটআপ ও লগইন ফরম স্ক্রিন ================= -->
-    <div id="auth-screen" class="auth-box">
-        <div style="text-align:center; font-size: 14px; color:#475569; margin-bottom: 20px; font-weight: 500;">দাদুর প্রোফাইল সেটআপ করুন ও অ্যাপটি ব্যবহার শুরু করুন</div>
-        <form id="setup-form">
-            <div class="form-group">
-                <label>আপনার নাম (নাতি/নাতনি):</label>
-                <input type="text" id="user-name" placeholder="যেমন: শুমাইয়া" required>
-            </div>
-            <div class="form-group">
-                <label>দাদুর পূর্ণ নাম:</label>
-                <input type="text" id="dadu-name" placeholder="যেমন: আলহাজ্ব জয়নাল আবেদীন" required>
-            </div>
-            <div class="form-group">
-                <label>দাদুর বয়স:</label>
-                <input type="number" id="dadu-age" placeholder="যেমন: ৭৫" required>
-            </div>
-            <div class="form-group">
-                <label>প্রধান শারীরিক সমস্যা:</label>
-                <input type="text" id="dadu-illness" placeholder="যেমন: ডায়াবেটিস এবং উচ্চ রক্তচাপ" required>
-            </div>
-            <button type="submit" class="btn-submit">🚀 প্রোফাইল তৈরি করুন</button>
-        </form>
+    <!-- কুইক অ্যাকশন বাটনগুলো -->
+    <div class="quick-actions">
+        <button class="btn" onclick="sendQuickMessage('দাদু, আমাকে একটি সুন্দর ও মিষ্টি গল্প শোনাও।')">📖 গল্প শুনতে চাই</button>
+        <button class="btn" onclick="sendQuickMessage('দাদু এখন একটু বিষণ্ণ বোধ করছে, তাকে সান্ত্বনা দাও এবং কিছু মিষ্টি কথা বলো।')">💙 মনটা ভালো নেই</button>
+        <button class="btn" onclick="sendQuickMessage('আমাকে একটি খুব মজার এবং পরিষ্কার জোকস বা কৌতুক শোনাও।')">😂 হাসির কিছু বলো</button>
+        <button class="btn" onclick="sendQuickMessage('আমি ঔষধ খেয়েছি দাদু।')">💊 ঔষধ খেয়েছি</button>
     </div>
 
-    <!-- ================= 📊 প্রধান ড্যাশবোর্ড স্ক্রিন ================= -->
-    <div id="main-dashboard">
-        <button class="btn-logout" id="logout-btn">🔴 লগআউট</button>
-        <div class="subtitle"><span id="display-subtitle">দাদুর পার্সোনাল হেলথ অ্যাসিস্ট্যান্ট</span></div>
-        
-        <button class="btn-perm" id="perm-btn">🔔 ব্যাকগ্রাউন্ড ওষুধ রিমাইন্ডার চালু করুন</button>
-        <button class="btn-mic" id="start-btn">🎙️ কথা বলুন</button>
-        <br>
-        <button class="btn-emergency" id="emergency-btn">🚨 QUICK SOS</button>
-        <p id="status">স্ট্যাটাস: অলস</p>
-        
-        <div id="ai-response"><b>AuraCare AI:</b> <span id="ai-text"></span></div>
-
-        <div class="section-title">📊 আজকের স্বাস্থ্য রিপোর্ট</div>
-        <div class="dashboard-grid">
-            <div class="card pulse"><h3>হার্ট রেট (Pulse)</h3><p>৭২ bpm</p></div>
-            <div class="card bp"><h3>রক্তচাপ (Blood Pressure)</h3><p>১২০/৮০ mmHg</p></div>
-        </div>
-
-        <div class="section-title">💊 ওষুধের রিমাইন্ডার চার্ট</div>
-        <table id="med-table">
-            <thead>
-                <tr>
-                    <th>ওষুধের নাম</th>
-                    <th>সময়</th>
-                    <th>খাওয়ার নিয়ম</th>
-                    <th>অবস্থা</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <div class="section-title">🏥 জরুরি হাসপাতাল ও অ্যাম্বুলেন্স ডিরেক্টরি</div>
-        <div class="hospital-list">
-            <div class="hospital-card">
-                <div><h4>স্কয়ার হাসপাতাল</h4><p>📍 পান্থপথ, ঢাকা</p></div>
-                <a href="tel:10616" class="btn-call">📞 কল করুন</a>
-            </div>
-            <div class="hospital-card">
-                <div><h4>সরকারি জরুরি অ্যাম্বুলেন্স</h4><p>🚑 ২৪ ঘন্টা সার্ভিস</p></div>
-                <a href="tel:999" class="btn-call">📞 ৯৯৯ কল</a>
-            </div>
-        </div>
-    </div>
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="কিছু বলুন...">
+    <button id="send-btn" onclick="sendMessage()">পাঠান</button>
 </div>
 
 <script>
-    // কনফিগ ও টোকেন
-    const GEMINI_API_KEY = "AQ.Ab8RN6JMk_97T1qh3BjEBHIKd8nzpN3K1Kxr3Xj5P1ggu6JE4Q";
-    const TELEGRAM_BOT_TOKEN = "8954792271:AAEgY4wqsXbOzonck-1O6iR-lkrAg-cPQXs";
-    const TELEGRAM_CHAT_ID = "8644571705";
+    const GEMINI_API_KEY = "তোমার_নতুন_কোডটি"; // এখানে তোমার কি-টি বসাও
 
-    const authScreen = document.getElementById('auth-screen');
-    const mainDashboard = document.getElementById('main-dashboard');
-    const setupForm = document.getElementById('setup-form');
-    const logoutBtn = document.getElementById('logout-btn');
-    const displaySubtitle = document.getElementById('display-subtitle');
-
-    const startBtn = document.getElementById('start-btn');
-    const emergencyBtn = document.getElementById('emergency-btn');
-    const permBtn = document.getElementById('perm-btn');
-    const statusText = document.getElementById('status');
-    const aiResponseBox = document.getElementById('ai-response');
-    const aiText = document.getElementById('ai-text');
-
-    let currentProfile = null;
-
-    // 🕒 ওষুধের অটো-টাইমার জেনারেটর (পেজ লোডের ১ ও ২ মিনিট পর অ্যালার্ম বাজবে)
-    const now = new Date();
-    const time1 = new Date(now.getTime() + 60000).toTimeString().slice(0,5); 
-    const time2 = new Date(now.getTime() + 120000).toTimeString().slice(0,5); 
-
-    const medicationSchedule = [
-        { name: "Seclo 20mg", time: time1, rule: "খাওয়ার আগে", status: "pending", spoken: false },
-        { name: "Bizoran 5/20", time: time2, rule: "খাওয়ার পরে", status: "pending", spoken: false }
-    ];
-
-    function renderTable() {
-        const tbody = document.querySelector('#med-table tbody');
-        tbody.innerHTML = medicationSchedule.map(med => `
-            <tr>
-                <td><b>${med.name}</b></td>
-                <td>${med.time}</td>
-                <td>${med.rule}</td>
-                <td><span class="status-badge ${med.status}">${med.status === 'done' ? 'খাওয়া হয়েছে' : 'বাকি আছে'}</span></td>
-            </tr>
-        `).join('');
+    async function sendQuickMessage(message) {
+        document.getElementById('user-input').value = message;
+        sendMessage();
     }
 
-    // 🔒 প্রোফাইল চেক ও সেশন ম্যানেজার
-    function checkSession() {
-        const savedProfile = localStorage.getItem('auraUser');
-        if (savedProfile) {
-            currentProfile = JSON.parse(savedProfile);
-            authScreen.style.display = 'none';
-            mainDashboard.style.display = 'block';
-            displaySubtitle.innerText = `${currentProfile.daduName} এর পার্সোনাল হেলথ অ্যাসিস্ট্যান্ট (সেটআপ করেছেন: ${currentProfile.userName})`;
-            renderTable();
-        } else {
-            authScreen.style.display = 'block';
-            mainDashboard.style.display = 'none';
-        }
-    }
+    async function sendMessage() {
+        const input = document.getElementById('user-input');
+        const chatBox = document.getElementById('chat-box');
+        const text = input.value;
+        if (!text) return;
 
-    // ফরম সাবমিট হ্যান্ডলার
-    setupForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const profile = {
-            userName: document.getElementById('user-name').value,
-            daduName: document.getElementById('dadu-name').value,
-            daduAge: document.getElementById('dadu-age').value,
-            daduIllness: document.getElementById('dadu-illness').value
-        };
-        localStorage.setItem('auraUser', JSON.stringify(profile));
-        checkSession();
-    });
+        chatBox.innerHTML += `<p><b>দাদু:</b> ${text}</p>`;
+        input.value = '';
 
-    // লগআউট হ্যান্ডলার
-    logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('auraUser');
-        checkSession();
-    });
-
-    // প্রাথমিক সেশন রান
-    checkSession();
-
-    // 🔊 ভয়েস স্পীচ ফাংশন
-    function speakOut(text) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const speech = new SpeechSynthesisUtterance(text);
-            speech.lang = 'bn-BD';
-            window.speechSynthesis.speak(speech);
-        }
-    }
-
-    // 📲 সার্ভিস ওয়ার্কার নোটিফিকেশন কানেকশন
-    let svcWorkerRegistration = null;
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-        navigator.serviceWorker.register('sw.js').then(reg => {
-            svcWorkerRegistration = reg;
-            if (Notification.permission === 'default') { permBtn.style.display = 'block'; }
-        });
-    }
-
-    permBtn.addEventListener('click', () => {
-        Notification.requestPermission().then(p => { if (p === 'granted') permBtn.style.display = 'none'; });
-    });
-
-    // ⏰ প্রতি ৫ সেকেন্ডের রিমাইন্ডার লুপ
-    setInterval(() => {
-        if (!currentProfile) return;
-        const currentTime = new Date().toTimeString().slice(0,5);
-        medicationSchedule.forEach(med => {
-            if (med.time === currentTime && !med.spoken) {
-                med.spoken = true;
-                med.status = "done";
-                renderTable();
-                const alertText = `দাদু, ${med.time} বেজে গেছে। আপনার ${med.name} ওষুধটি খেয়ে নিন।`;
-                speakOut(alertText);
-                if (Notification.permission === 'granted' && svcWorkerRegistration) {
-                    navigator.serviceWorker.ready.then(reg => {
-                        if (reg.active) reg.active.postMessage({ type: 'MEDICINE_REMINDER', title: '💊 ওষুধ খাওয়ার সময় হয়েছে!', body: alertText });
-                    });
-                }
-            }
-        });
-    }, 5000);
-
-    // 🚨 SOS এবং টেলিগ্রাম অ্যালার্ট
-    function sendSOSMobileAlert(textSpoken) {
-        if (!currentProfile) return;
-        statusText.innerText = "অ্যালার্ট পাঠানো হচ্ছে...";
-        statusText.style.color = "#ef4444";
-        speakOut("দাদু চিন্তা করবেন না, পরিবারকে খবর দিচ্ছি।");
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const link = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                const msg = `🚨 *AuraCare SOS Emergency Alert!*\n\n${currentProfile.daduName} বিপদে পড়েছেন!\nওনার শেষ কথা ছিল: "${textSpoken}"\n\n📍 *লাইভ লোকেশন:*\n${link}`;
-                submitTelegramAlert(msg);
-            }, () => {
-                submitTelegramAlert(`🚨 *AuraCare SOS Emergency Alert!*\n\n${currentProfile.daduName} বিপদে পড়েছেন!\nওনার শেষ কথা ছিল: "${textSpoken}"`);
-            });
-        }
-    }
-
-    async function submitTelegramAlert(messageContent) {
-        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         try {
-            await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: messageContent, parse_mode: "Markdown" }) });
-            alert("🚨 SOS অ্যালার্ট টেলিগ্রামে পাঠানো হয়েছে!");
-        } catch (e) { console.error(e); }
-        statusText.innerText = "স্ট্যাটাস: অলস";
-        statusText.style.color = "#64748b";
-    }
-
-    emergencyBtn.addEventListener('click', () => sendSOSMobileAlert("ইমার্জেন্সি বাটন প্রেস করা হয়েছে!"));
-
-    // 🎙️ জেমিনি এআই চ্যাটবট (ডাইনামিক প্রোফাইল মেমোরি ও একাকীত্ব দূর করার মডিউল সহ)
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'bn-BD';
-
-    startBtn.addEventListener('click', () => {
-        recognition.start();
-        statusText.innerText = "স্ট্যাটাস: শুনছি...";
-        aiResponseBox.style.display = "none";
-    });
-
-    recognition.onresult = async (event) => {
-        const text = event.results[0][0].transcript;
-        statusText.innerText = `আপনি বলেছেন: "${text}"`;
-        statusText.style.color = "#3498db";
-        
-        if (text.includes('বাঁচাও') || text.includes('বিপদ') || text.includes('কষ্ট')) {
-            sendSOSMobileAlert(text);
-        } else {
-            aiResponseBox.style.display = "block";
-            aiText.innerText = "ভাবছে...";
-            
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        contents: [{ parts: [{ text: `You are AuraCare, a sweet, caring, and warm medical companion and mental wellbeing assistant for elderly grandfathers (Dadu). 
-                        Respond to the user shortly in affectionate Bengali language. Always keep answers sweet and within 1-2 short lines. Do not use asterisks (*) or markdown.
-
-                        Here is the live dynamic data of the current user:
-                        - Patient Name: ${currentProfile.daduName}
-                        - Patient Age: ${currentProfile.daduAge}
-                        - Diseases: ${currentProfile.daduIllness}
-                        - Account Created By (Grandchild): ${currentProfile.userName}
-
-                        Special Feature (Mental Wellbeing): 
-                        If Dadu says he is feeling lonely, bored, asks for a story ("গল্প শোনাও") or a joke ("কৌতুক শোনাও / হাসির কিছু বলো"), 
-                        then tell him a very short, cheerful, and sweet Bengali story or a clean joke (within 3-4 simple lines) to make him happy and remove his loneliness.
-
-                        User input: ${text}` }] }] 
-                    })
-                });
-                
-                const data = await response.json();
-                const reply = data.candidates[0].content.parts[0].text;
-                aiText.innerText = reply;
-                speakOut(reply);
-            } catch (error) { 
-                console.error(error); 
-                aiText.innerText = "দুঃখিত দাদু, একটু সমস্যা হয়েছে।";
-            }
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: `তুমি একজন যত্নশীল সঙ্গী। দাদুর ইনপুট: ${text}` }] }]
+                })
+            });
+            const data = await response.json();
+            const reply = data.candidates[0].content.parts[0].text;
+            chatBox.innerHTML += `<p><b>AuraCare:</b> ${reply}</p>`;
+        } catch (error) {
+            chatBox.innerHTML += `<p style="color:red;">দুঃখিত, সংযোগে সমস্যা হয়েছে।</p>`;
         }
-    };
+    }
 </script>
+
 </body>
 </html>
