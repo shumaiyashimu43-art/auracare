@@ -3,536 +3,383 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraCare - বাংলা এআই অ্যাসিস্ট্যান্ট</title>
+    <title>AuraCare AI - দাদুর সহকারী</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Hind Siliguri for beautiful Bengali typography) -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- 📱 ফেসবুক বা চ্যাটজিপিটির মতো অ্যাপ আইকন ও ম্যানিফেস্ট লিঙ্ক -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icon.png" type="image/png">
-    <meta name="theme-color" content="#2563eb">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <style>
-        /* 🎨 গ্লোবাল স্টাইল ও প্রিমিয়াম ব্যাকগ্রাউন্ড গ্রেডিয়েন্ট */
-        body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%); 
-            min-height: 100vh;
-            text-align: center; 
-            padding: 40px 15px; 
-            margin: 0; 
-            color: #1e293b;
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f0f7ff;
         }
-
-        /* 🧼 গ্লাস-মরফিজম কন্টেইনার */
-        .container { 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 35px 25px; 
-            border-radius: 24px; 
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); 
-            max-width: 550px; 
-            margin: 0 auto; 
-            border: 1px solid rgba(255, 255, 255, 0.6);
+        /* Custom animation for pulsating SOS button */
+        @keyframes pulse-red {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
-
-        h1 { 
-            color: #0f172a; 
-            font-size: 32px; 
-            margin: 0 0 8px 0; 
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        
-        .subtitle { 
-            color: #475569; 
-            font-size: 15px; 
-            margin-bottom: 30px; 
-            font-weight: 500;
-            line-height: 1.5;
-        }
-        
-        /* 🔐 মডার্ন সেটআপ ও লগইন ফরম */
-        .auth-box { 
-            background: rgba(255, 255, 255, 0.6); 
-            padding: 25px; 
-            border-radius: 16px; 
-            text-align: left; 
-            border: 1px solid rgba(255, 255, 255, 0.7);
-        }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { 
-            display: block; 
-            font-weight: 600; 
-            margin-bottom: 8px; 
-            color: #334155; 
-            font-size: 14px; 
-        }
-        .form-group input { 
-            width: 100%; 
-            padding: 12px 16px; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 10px; 
-            box-sizing: border-box; 
-            font-size: 15px; 
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-        .btn-submit { 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-            color: white; 
-            border: none; 
-            padding: 14px; 
-            width: 100%; 
-            border-radius: 10px; 
-            font-size: 16px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-        }
-        .btn-submit:hover { 
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
-        }
-
-        /* 📊 প্রধান ড্যাশবোর্ড (শুরুতে লুকানো থাকবে) */
-        #main-dashboard { display: none; }
-
-        /* 🎙️ বয়স্ক-বান্ধব বড় কন্ট্রোল বাটন */
-        .btn-mic { 
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
-            color: white; 
-            border: none; 
-            padding: 16px 35px; 
-            font-size: 19px; 
-            border-radius: 50px; 
-            cursor: pointer; 
-            font-weight: 700; 
-            transition: all 0.3s ease; 
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
-        }
-        .btn-mic:hover { 
-            transform: scale(1.03);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
-        }
-        
-        .btn-emergency { 
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
-            color: white; 
-            border: none; 
-            padding: 15px; 
-            font-size: 22px; 
-            border-radius: 50%; 
-            width: 130px; 
-            height: 130px; 
-            cursor: pointer; 
-            margin-top: 20px; 
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); 
-            font-weight: 800; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        .btn-emergency:hover { 
-            transform: scale(1.08); 
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.7); 
-        }
-        
-        .btn-perm { 
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            font-size: 15px; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            margin-bottom: 25px; 
-            font-weight: 700; 
-            display: none; 
-            width: 100%; 
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
-        }
-        .btn-logout { 
-            background-color: #f1f5f9; 
-            color: #64748b; 
-            border: 1px solid #e2e8f0; 
-            padding: 6px 12px; 
-            font-size: 13px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            float: right; 
-            font-weight: 600;
-            transition: 0.2s;
-        }
-        .btn-logout:hover {
-            background-color: #fee2e2;
-            color: #ef4444;
-            border-color: #fca5a5;
-        }
-        
-        #status { margin-top: 18px; font-weight: 700; color: #64748b; font-size: 16px; }
-        
-        /* 💬 স্পীচ রেসপন্স বক্স */
-        #ai-response { 
-            margin-top: 25px; 
-            padding: 18px; 
-            background-color: #f8fafc; 
-            border-radius: 16px; 
-            display: none; 
-            text-align: left; 
-            font-size: 16px; 
-            border-left: 5px solid #10b981; 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-        
-        /* 📊 ড্যাশবোর্ড গ্রিড */
-        .section-title { 
-            font-size: 20px; 
-            color: #0f172a; 
-            margin-top: 40px; 
-            margin-bottom: 18px; 
-            text-align: left; 
-            font-weight: 700; 
-            border-bottom: 2px solid #e2e8f0; 
-            padding-bottom: 8px; 
-        }
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .card { 
-            background: #ffffff; 
-            padding: 18px; 
-            border-radius: 14px; 
-            border: 1px solid #e2e8f0; 
-            text-align: center; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
-        }
-        .card h3 { margin: 0 0 8px 0; font-size: 14px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-        .card p { margin: 0; font-size: 26px; font-weight: 800; }
-        .card.pulse p { color: #ef4444; }
-        .card.bp p { color: #10b981; }
-
-        /* 📋 ওষুধ টেবিল স্টাইল */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; }
-        th, td { padding: 14px 16px; text-align: left; font-size: 14px; }
-        th { background-color: #f8fafc; color: #475569; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
-        td { border-bottom: 1px solid #f1f5f9; color: #334155; }
-        .status-badge { padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; display: inline-block; }
-        .done { background-color: #d1fae5; color: #065f46; }
-        .pending { background-color: #fef3c7; color: #92400e; }
-
-        /* 🏥 হাসপাতাল ডিরেক্টরি কার্ড */
-        .hospital-list { display: flex; flex-direction: column; gap: 12px; text-align: left; }
-        .hospital-card { 
-            background: #ffffff; 
-            padding: 16px 20px; 
-            border-radius: 14px; 
-            border: 1px solid #e2e8f0; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            transition: transform 0.2s;
-        }
-        .hospital-card:hover { transform: translateY(-2px); }
-        .hospital-card h4 { margin: 0 0 6px 0; color: #0f172a; font-size: 16px; }
-        .hospital-card p { margin: 0; font-size: 13px; color: #64748b; }
-        .btn-call { 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-            color: white; 
-            text-decoration: none; 
-            padding: 10px 18px; 
-            border-radius: 8px; 
-            font-size: 13px; 
-            font-weight: 700; 
-            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+        .animate-pulse-red {
+            animation: pulse-red 2s infinite;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center p-4">
 
-<div class="container">
-    <h1>AuraCare AI 🧓✨</h1>
+<div class="w-full max-w-lg bg-white rounded-3xl shadow-xl border border-blue-50 overflow-hidden">
     
-    <!-- ================= 🔐 সেটআপ ও লগইন ফরম স্ক্রিন ================= -->
-    <div id="auth-screen" class="auth-box">
-        <div style="text-align:center; font-size: 14px; color:#475569; margin-bottom: 20px; font-weight: 500;">দাদুর প্রোফাইল সেটআপ করুন ও অ্যাপটি ব্যবহার শুরু করুন</div>
-        <form id="setup-form">
-            <div class="form-group">
-                <label>আপনার নাম (নাতি/নাতনি):</label>
-                <input type="text" id="user-name" placeholder="যেমন: শুমাইয়া" required>
+    <!-- Setup Screen (shown if profile is not saved) -->
+    <div id="setup-screen" class="p-8 hidden">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800 flex items-center justify-center gap-2 mb-2">
+                AuraCare AI 👵✨
+            </h1>
+            <p class="text-slate-500 text-sm">দাদুর প্রোফাইল সেটআপ করুন ও অ্যাপটি ব্যবহার শুরু করুন</p>
+        </div>
+
+        <form id="setup-form" onsubmit="saveProfile(event)" class="space-y-5">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">আপনার নাম (নাতি/নাতনি):</label>
+                <input type="text" id="user-name" placeholder="যেমন: সুমাইয়া" required 
+                       class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:outline-none">
             </div>
-            <div class="form-group">
-                <label>দাদুর পূর্ণ নাম:</label>
-                <input type="text" id="dadu-name" placeholder="যেমন: আলহাজ্ব জয়নাল আবেদীন" required>
+
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">দাদুর পূর্ণ নাম:</label>
+                <input type="text" id="dadu-name" placeholder="যেমন: ফজিলাতুন্নেছা" required 
+                       class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:outline-none">
             </div>
-            <div class="form-group">
-                <label>দাদুর বয়স:</label>
-                <input type="number" id="dadu-age" placeholder="যেমন: ৭৫" required>
+
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">দাদুর বয়স:</label>
+                <input type="number" id="dadu-age" placeholder="যেমন: ৭৫" required 
+                       class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:outline-none">
             </div>
-            <div class="form-group">
-                <label>প্রধান শারীরিক সমস্যা:</label>
-                <input type="text" id="dadu-illness" placeholder="যেমন: ডায়াবেটিস এবং উচ্চ রক্তচাপ" required>
+
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">প্রধান শারীরিক সমস্যা:</label>
+                <input type="text" id="dadu-problem" placeholder="যেমন: ডায়াবেটিস এবং উচ্চ রক্তচাপ" required 
+                       class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:outline-none">
             </div>
-            <button type="submit" class="btn-submit">🚀 প্রোফাইল তৈরি করুন</button>
+
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                🚀 প্রোফাইল তৈরি করুন
+            </button>
         </form>
     </div>
 
-    <!-- ================= 📊 প্রধান ড্যাশবোর্ড স্ক্রিন ================= -->
-    <div id="main-dashboard">
-        <button class="btn-logout" id="logout-btn">🔴 লগআউট</button>
-        <div class="subtitle"><span id="display-subtitle">দাদুর পার্সোনাল হেলথ অ্যাসিস্ট্যান্ট</span></div>
-        
-        <button class="btn-perm" id="perm-btn">🔔 ব্যাকগ্রাউন্ড ওষুধ রিমাইন্ডার চালু করুন</button>
-        <button class="btn-mic" id="start-btn">🎙️ কথা বলুন</button>
-        <br>
-        <button class="btn-emergency" id="emergency-btn">🚨 QUICK SOS</button>
-        <p id="status">স্ট্যাটাস: অলস</p>
-        
-        <div id="ai-response"><b>AuraCare AI:</b> <span id="ai-text"></span></div>
-
-        <div class="section-title">📊 আজকের স্বাস্থ্য রিপোর্ট</div>
-        <div class="dashboard-grid">
-            <div class="card pulse"><h3>হার্ট রেট (Pulse)</h3><p>৭২ bpm</p></div>
-            <div class="card bp"><h3>রক্তচাপ (Blood Pressure)</h3><p>১২০/৮০ mmHg</p></div>
+    <!-- Dashboard Screen (shown if profile exists) -->
+    <div id="dashboard-screen" class="p-6 hidden">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                    AuraCare AI 👵✨
+                </h1>
+                <p id="dashboard-subtitle" class="text-xs text-slate-500 mt-1"></p>
+            </div>
+            <button onclick="logout()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 font-semibold px-3 py-1.5 rounded-lg border border-red-200 transition duration-200 flex items-center gap-1">
+                🔴 লগআউট
+            </button>
         </div>
 
-        <div class="section-title">💊 ওষুধের রিমাইন্ডার চার্ট</div>
-        <table id="med-table">
-            <thead>
-                <tr>
-                    <th>ওষুধের নাম</th>
-                    <th>সময়</th>
-                    <th>খাওয়ার নিয়ম</th>
-                    <th>অবস্থা</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <!-- Voice Button Section -->
+        <div class="flex flex-col items-center justify-center py-6 border-b border-slate-100">
+            <button id="speak-btn" onclick="toggleListening()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-8 rounded-2xl transition duration-300 shadow-lg flex items-center gap-3 text-lg">
+                <span id="mic-icon"><i class="fa-solid fa-microphone"></i></span>
+                <span id="btn-text">কথা বলুন</span>
+            </button>
+            
+            <!-- SOS Button -->
+            <button onclick="triggerSOS()" class="mt-8 w-28 h-28 bg-red-600 hover:bg-red-700 text-white font-bold rounded-full flex flex-col items-center justify-center shadow-lg border-4 border-red-200 animate-pulse-red transition-all transform hover:scale-105 active:scale-95 duration-200">
+                <i class="fa-solid fa-triangle-exclamation text-2xl mb-1"></i>
+                <span class="text-xs tracking-wider">QUICK SOS</span>
+            </button>
+        </div>
 
-        <div class="section-title">🏥 জরুরি হাসপাতাল ও অ্যাম্বুলেন্স ডিরেক্টরি</div>
-        <div class="hospital-list">
-            <div class="hospital-card">
-                <div><h4>স্কয়ার হাসপাতাল</h4><p>📍 পান্থপথ, ঢাকা</p></div>
-                <a href="tel:10616" class="btn-call">📞 কল করুন</a>
-            </div>
-            <div class="hospital-card">
-                <div><h4>সরকারি জরুরি অ্যাম্বুলেন্স</h4><p>🚑 ২৪ ঘন্টা সার্ভিস</p></div>
-                <a href="tel:999" class="btn-call">📞 ৯৯৯ কল</a>
+        <!-- Chat Area -->
+        <div class="my-6">
+            <p id="user-transcript" class="text-blue-600 font-semibold text-center text-sm mb-4 italic hidden"></p>
+            
+            <div class="bg-slate-50 border-l-4 border-emerald-500 rounded-r-2xl p-4 min-h-[100px] flex items-center justify-center">
+                <p id="ai-response" class="text-slate-700 text-sm leading-relaxed text-center">
+                    নিচের <strong>"কথা বলুন"</strong> বাটনে চাপ দিয়ে দাদুকে কিছু বলতে বলুন। অথবা আপনার প্রশ্ন টাইপ করে পাঠান।
+                </p>
             </div>
         </div>
+
+        <!-- Manual text-input for fallback -->
+        <div class="flex gap-2 mb-6">
+            <input type="text" id="manual-text" placeholder="টাইপ করে কিছু বলুন..." class="flex-grow p-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <button onclick="sendManualText()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition">পাঠান</button>
+        </div>
+
+        <!-- Health Stats Cards -->
+        <div class="border-t border-slate-100 pt-6">
+            <h3 class="text-md font-bold text-slate-800 mb-4 flex items-center gap-2">
+                📊 আজকের স্বাস্থ্য রিপোর্ট
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-rose-50/50 border border-rose-100 rounded-2xl p-4 text-center">
+                    <span class="text-xs text-rose-500 font-bold tracking-wider">হার্ট রেট (PULSE)</span>
+                    <p class="text-2xl font-black text-rose-600 mt-1">৭২ <span class="text-xs font-normal">bpm</span></p>
+                </div>
+                <div class="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-4 text-center">
+                    <span class="text-xs text-emerald-600 font-bold tracking-wider">রক্তচাপ (BLOOD PRESSURE)</span>
+                    <p class="text-2xl font-black text-emerald-600 mt-1">১২০/৮০ <span class="text-xs font-normal">mmHg</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medicine Reminders -->
+        <div class="mt-6">
+            <h3 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
+                💊 ওষুধের রিমাইন্ডার চার্ট
+            </h3>
+            <div class="overflow-x-auto rounded-xl border border-slate-100">
+                <table class="w-full text-xs text-left text-slate-500">
+                    <thead class="bg-slate-50 text-slate-700 uppercase font-semibold">
+                        <tr>
+                            <th class="p-3">ওষুধের নাম</th>
+                            <th class="p-3">সময়</th>
+                            <th class="p-3">খাওয়ার নিয়ম</th>
+                            <th class="p-3">অবস্থা</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-slate-100 bg-white">
+                            <td class="p-3 font-semibold text-slate-700">অ্যাসপিরিন ৭৫ মি.গ্রা.</td>
+                            <td class="p-3">সকাল ৮:০০টা</td>
+                            <td class="p-3">ভরা পেটে</td>
+                            <td class="p-3"><span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">খাইয়েছেন</span></td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3 font-semibold text-slate-700">মেটফরমিন ৮৫০ মি.গ্রা.</td>
+                            <td class="p-3">রাত ৯:০০টা</td>
+                            <td class="p-3">ভরা পেটে</td>
+                            <td class="p-3"><span class="bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full">বাকি আছে</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <script>
-    // কনফিগ ও টোকেন
-    const GEMINI_API_KEY = "AQ.Ab8RN6JMk_97T1qh3BjEBHIKd8nzpN3K1Kxr3Xj5P1ggu6JE4Q";
-    const TELEGRAM_BOT_TOKEN = "8954792271:AAEgY4wqsXbOzonck-1O6iR-lkrAg-cPQXs";
-    const TELEGRAM_CHAT_ID = "8644571705";
+    // ==========================================
+    // 🔑 এখানে তোমার আসল GEMINI API KEY বসাও 🔑
+    // ==========================================
+    const GEMINI_API_KEY = "AQ.Ab8RN6IFOfLfQkpI3LqRUcMYfrumPRtHH6f0FG4qC0gh80JSHw"; 
 
-    const authScreen = document.getElementById('auth-screen');
-    const mainDashboard = document.getElementById('main-dashboard');
-    const setupForm = document.getElementById('setup-form');
-    const logoutBtn = document.getElementById('logout-btn');
-    const displaySubtitle = document.getElementById('display-subtitle');
+    let recognition;
+    let isListening = false;
 
-    const startBtn = document.getElementById('start-btn');
-    const emergencyBtn = document.getElementById('emergency-btn');
-    const permBtn = document.getElementById('perm-btn');
-    const statusText = document.getElementById('status');
-    const aiResponseBox = document.getElementById('ai-response');
-    const aiText = document.getElementById('ai-text');
-
-    let currentProfile = null;
-
-    // 🕒 ওষুধের অটো-টাইমার জেনারেটর (পেজ লোডের ১ ও ২ মিনিট পর অ্যালার্ম বাজবে)
-    const now = new Date();
-    const time1 = new Date(now.getTime() + 60000).toTimeString().slice(0,5); 
-    const time2 = new Date(now.getTime() + 120000).toTimeString().slice(0,5); 
-
-    const medicationSchedule = [
-        { name: "Seclo 20mg", time: time1, rule: "খাওয়ার আগে", status: "pending", spoken: false },
-        { name: "Bizoran 5/20", time: time2, rule: "খাওয়ার পরে", status: "pending", spoken: false }
-    ];
-
-    function renderTable() {
-        const tbody = document.querySelector('#med-table tbody');
-        tbody.innerHTML = medicationSchedule.map(med => `
-            <tr>
-                <td><b>${med.name}</b></td>
-                <td>${med.time}</td>
-                <td>${med.rule}</td>
-                <td><span class="status-badge ${med.status}">${med.status === 'done' ? 'খাওয়া হয়েছে' : 'বাকি আছে'}</span></td>
-            </tr>
-        `).join('');
-    }
-
-    // 🔒 প্রোফাইল চেক ও সেশন ম্যানেজার
-    function checkSession() {
-        const savedProfile = localStorage.getItem('auraUser');
-        if (savedProfile) {
-            currentProfile = JSON.parse(savedProfile);
-            authScreen.style.display = 'none';
-            mainDashboard.style.display = 'block';
-            displaySubtitle.innerText = `${currentProfile.daduName} এর পার্সোনাল হেলথ অ্যাসিস্ট্যান্ট (সেটআপ করেছেন: ${currentProfile.userName})`;
-            renderTable();
-        } else {
-            authScreen.style.display = 'block';
-            mainDashboard.style.display = 'none';
-        }
-    }
-
-    // ফরম সাবমিট হ্যান্ডলার
-    setupForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const profile = {
-            userName: document.getElementById('user-name').value,
-            daduName: document.getElementById('dadu-name').value,
-            daduAge: document.getElementById('dadu-age').value,
-            daduIllness: document.getElementById('dadu-illness').value
-        };
-        localStorage.setItem('auraUser', JSON.stringify(profile));
-        checkSession();
-    });
-
-    // লগআউট হ্যান্ডলার
-    logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('auraUser');
-        checkSession();
-    });
-
-    // প্রাথমিক সেশন রান
-    checkSession();
-
-    // 🔊 ভয়েস স্পীচ ফাংশন
-    function speakOut(text) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const speech = new SpeechSynthesisUtterance(text);
-            speech.lang = 'bn-BD';
-            window.speechSynthesis.speak(speech);
-        }
-    }
-
-    // 📲 সার্ভিস ওয়ার্কার নোটিফিকেশন কানেকশন
-    let svcWorkerRegistration = null;
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-        navigator.serviceWorker.register('sw.js').then(reg => {
-            svcWorkerRegistration = reg;
-            if (Notification.permission === 'default') { permBtn.style.display = 'block'; }
-        });
-    }
-
-    permBtn.addEventListener('click', () => {
-        Notification.requestPermission().then(p => { if (p === 'granted') permBtn.style.display = 'none'; });
-    });
-
-    // ⏰ প্রতি ৫ সেকেন্ডের রিমাইন্ডার লুপ
-    setInterval(() => {
-        if (!currentProfile) return;
-        const currentTime = new Date().toTimeString().slice(0,5);
-        medicationSchedule.forEach(med => {
-            if (med.time === currentTime && !med.spoken) {
-                med.spoken = true;
-                med.status = "done";
-                renderTable();
-                const alertText = `দাদু, ${med.time} বেজে গেছে। আপনার ${med.name} ওষুধটি খেয়ে নিন।`;
-                speakOut(alertText);
-                if (Notification.permission === 'granted' && svcWorkerRegistration) {
-                    navigator.serviceWorker.ready.then(reg => {
-                        if (reg.active) reg.active.postMessage({ type: 'MEDICINE_REMINDER', title: '💊 ওষুধ খাওয়ার সময় হয়েছে!', body: alertText });
-                    });
-                }
-            }
-        });
-    }, 5000);
-
-    // 🚨 SOS এবং টেলিগ্রাম অ্যালার্ট
-    function sendSOSMobileAlert(textSpoken) {
-        if (!currentProfile) return;
-        statusText.innerText = "অ্যালার্ট পাঠানো হচ্ছে...";
-        statusText.style.color = "#ef4444";
-        speakOut("দাদু চিন্তা করবেন না, পরিবারকে খবর দিচ্ছি।");
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const link = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                const msg = `🚨 *AuraCare SOS Emergency Alert!*\n\n${currentProfile.daduName} বিপদে পড়েছেন!\nওনার শেষ কথা ছিল: "${textSpoken}"\n\n📍 *লাইভ লোকেশন:*\n${link}`;
-                submitTelegramAlert(msg);
-            }, () => {
-                submitTelegramAlert(`🚨 *AuraCare SOS Emergency Alert!*\n\n${currentProfile.daduName} বিপদে পড়েছেন!\nওনার শেষ কথা ছিল: "${textSpoken}"`);
-            });
-        }
-    }
-
-    async function submitTelegramAlert(messageContent) {
-        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-        try {
-            await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: messageContent, parse_mode: "Markdown" }) });
-            alert("🚨 SOS অ্যালার্ট টেলিগ্রামে পাঠানো হয়েছে!");
-        } catch (e) { console.error(e); }
-        statusText.innerText = "স্ট্যাটাস: অলস";
-        statusText.style.color = "#64748b";
-    }
-
-    emergencyBtn.addEventListener('click', () => sendSOSMobileAlert("ইমার্জেন্সি বাটন প্রেস করা হয়েছে!"));
-
-    // 🎙️ জেমিনি এআই চ্যাটবট (ডাইনামিক প্রোফাইল মেমোরি ও একাকীত্ব দূর করার মডিউল সহ)
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'bn-BD';
-
-    startBtn.addEventListener('click', () => {
-        recognition.start();
-        statusText.innerText = "স্ট্যাটাস: শুনছি...";
-        aiResponseBox.style.display = "none";
-    });
-
-    recognition.onresult = async (event) => {
-        const text = event.results[0][0].transcript;
-        statusText.innerText = `আপনি বলেছেন: "${text}"`;
-        statusText.style.color = "#3498db";
-        
-        if (text.includes('বাঁচাও') || text.includes('বিপদ') || text.includes('কষ্ট')) {
-            sendSOSMobileAlert(text);
-        } else {
-            aiResponseBox.style.display = "block";
-            aiText.innerText = "ভাবছে...";
-            
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        contents: [{ parts: [{ text: `You are AuraCare, a sweet, caring, and warm medical companion and mental wellbeing assistant for elderly grandfathers (Dadu). 
-                        Respond to the user shortly in affectionate Bengali language. Always keep answers sweet and within 1-2 short lines. Do not use asterisks (*) or markdown.
-
-                        Here is the live dynamic data of the current user:
-                        - Patient Name: ${currentProfile.daduName}
-                        - Patient Age: ${currentProfile.daduAge}
-                        - Diseases: ${currentProfile.daduIllness}
-                        - Account Created By (Grandchild): ${currentProfile.userName}
-
-                        Special Feature (Mental Wellbeing): 
-                        If Dadu says he is feeling lonely, bored, asks for a story ("গল্প শোনাও") or a joke ("কৌতুক শোনাও / হাসির কিছু বলো"), 
-                        then tell him a very short, cheerful, and sweet Bengali story or a clean joke (within 3-4 simple lines) to make him happy and remove his loneliness.
-
-                        User input: ${text}` }] }] 
-                    })
-                });
-                
-                const data = await response.json();
-                const reply = data.candidates[0].content.parts[0].text;
-                aiText.innerText = reply;
-                speakOut(reply);
-            } catch (error) { 
-                console.error(error); 
-                aiText.innerText = "দুঃখিত দাদু, একটু সমস্যা হয়েছে।";
-            }
-        }
+    // Load App on Window Start
+    window.onload = function() {
+        checkProfile();
+        setupSpeechRecognition();
     };
+
+    // Check if user profile is already saved in LocalStorage
+    function checkProfile() {
+        const userName = localStorage.getItem('user_name');
+        const daduName = localStorage.getItem('dadu_name');
+        const daduAge = localStorage.getItem('dadu_age');
+        const daduProblem = localStorage.getItem('dadu_problem');
+
+        if (userName && daduName) {
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('dashboard-screen').classList.remove('hidden');
+            document.getElementById('dashboard-subtitle').innerHTML = 
+                `<strong>${daduName}</strong> এর পার্সোনাল হেলথ অ্যাসিস্ট্যান্ট (সেটআপ করেছেন: ${userName})`;
+        } else {
+            document.getElementById('setup-screen').classList.remove('hidden');
+            document.getElementById('dashboard-screen').classList.add('hidden');
+        }
+    }
+
+    // Save Profile to LocalStorage
+    function saveProfile(event) {
+        event.preventDefault();
+        const userName = document.getElementById('user-name').value.trim();
+        const daduName = document.getElementById('dadu-name').value.trim();
+        const daduAge = document.getElementById('dadu-age').value.trim();
+        const daduProblem = document.getElementById('dadu-problem').value.trim();
+
+        localStorage.setItem('user_name', userName);
+        localStorage.setItem('dadu_name', daduName);
+        localStorage.setItem('dadu_age', daduAge);
+        localStorage.setItem('dadu_problem', daduProblem);
+
+        checkProfile();
+    }
+
+    // Logout and Reset Profile
+    function logout() {
+        localStorage.clear();
+        checkProfile();
+        // Reset responses
+        document.getElementById('user-transcript').classList.add('hidden');
+        document.getElementById('ai-response').innerHTML = 'নিচের <strong>"কথা বলুন"</strong> বাটনে চাপ দিয়ে দাদুকে কিছু বলতে বলুন। অথবা আপনার প্রশ্ন টাইপ করে পাঠান।';
+    }
+
+    // Setup Web Speech API for voice search
+    function setupSpeechRecognition() {
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'bn-BD'; // Bengali Voice Recognition
+            recognition.interimResults = false;
+
+            recognition.onstart = function() {
+                isListening = true;
+                document.getElementById('speak-btn').className = "bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-8 rounded-2xl transition duration-300 shadow-lg flex items-center gap-3 text-lg";
+                document.getElementById('mic-icon').innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i>';
+                document.getElementById('btn-text').innerText = "দাদু বলুন, শুনছি...";
+            };
+
+            recognition.onend = function() {
+                isListening = false;
+                document.getElementById('speak-btn').className = "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-8 rounded-2xl transition duration-300 shadow-lg flex items-center gap-3 text-lg";
+                document.getElementById('mic-icon').innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                document.getElementById('btn-text').innerText = "কথা বলুন";
+            };
+
+            recognition.onresult = function(event) {
+                const speechToText = event.results[0][0].transcript;
+                const transcriptEl = document.getElementById('user-transcript');
+                transcriptEl.innerText = `আপনি বলেছেন: "${speechToText}"`;
+                transcriptEl.classList.remove('hidden');
+                
+                // Send captured text to Gemini API
+                sendToGemini(speechToText);
+            };
+
+            recognition.onerror = function(event) {
+                console.error("Speech Recognition Error:", event.error);
+                alert("দুঃখিত, ভয়েস রেকগনিশন চালু করা যায়নি। অনুগ্রহ করে টাইপ করে লিখুন।");
+            };
+        } else {
+            console.log("Speech Recognition not supported in this browser.");
+            document.getElementById('speak-btn').disabled = true;
+            document.getElementById('speak-btn').title = "আপনার ব্রাউজারটি ভয়েস সাপোর্ট করে না";
+        }
+    }
+
+    // Toggle voice listening
+    function toggleListening() {
+        if (!recognition) {
+            alert("আপনার ব্রাউজারে ভয়েস সার্ভিসটি চালু নেই। অনুগ্রহ করে টাইপ করে লিখুন।");
+            return;
+        }
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    }
+
+    // Manual text sending
+    function sendManualText() {
+        const textInput = document.getElementById('manual-text');
+        const text = textInput.value.trim();
+        if (!text) return;
+
+        const transcriptEl = document.getElementById('user-transcript');
+        transcriptEl.innerText = `আপনি বলেছেন: "${text}"`;
+        transcriptEl.classList.remove('hidden');
+        textInput.value = '';
+
+        sendToGemini(text);
+    }
+
+    // Call Gemini API and render reply
+    async function sendToGemini(inputText) {
+        const aiResponseText = document.getElementById('ai-response');
+        aiResponseText.innerHTML = `<span class="flex items-center gap-2 text-slate-500"><i class="fa-solid fa-circle-notch animate-spin text-emerald-500"></i> AuraCare AI চিন্তা করছে...</span>`;
+
+        // 🚨 এপিআই কি ফিল্টার অ্যালার্ট
+        if (GEMINI_API_KEY === "AIzaSy..." || !GEMINI_API_KEY || GEMINI_API_KEY.trim() === "") {
+            aiResponseText.innerHTML = `
+                <div class="text-left text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-200">
+                    <p class="font-bold mb-1">⚠️ এপিআই কি (API Key) ত্রুটি!</p>
+                    <p class="text-xs leading-relaxed">শুমাইয়া, তুমি কোডের <strong>২৪ নম্বর লাইনে</strong> তোমার আসল এপিআই কি (API Key) বসাতে ভুলে গেছো। অনুগ্রহ করে <code>const GEMINI_API_KEY = "AIzaSy...";</code> অংশটি পরিবর্তন করে তোমার আসল কী-টি বসাও এবং গিটহাবে আপলোড করো।</p>
+                </div>
+            `;
+            return;
+        }
+
+        const daduName = localStorage.getItem('dadu_name') || "দাদু";
+        const daduAge = localStorage.getItem('dadu_age') || "৭৫";
+        const daduProblem = localStorage.getItem('dadu_problem') || "ডায়াবেটিস";
+        const userName = localStorage.getItem('user_name') || "সুমাইয়া";
+
+        const prompt = `তুমি একজন অত্যন্ত যত্নশীল এবং মিষ্টিভাষী হেলথ অ্যাসিস্ট্যান্ট। তোমার নাম 'AuraCare AI'। 
+দাদুর নাম: ${daduName} (বয়স: ${daduAge} বছর)। দাদুর প্রধান শারীরিক সমস্যা: ${daduProblem}। 
+দাদুর নাতনি/নাতি ${userName} দাদুর খেয়াল রাখার জন্য তোমাকে নিযুক্ত করেছে। 
+দাদুকে খুব সম্মান দিয়ে কথা বলবে। দাদুর ইনপুট: "${inputText}"`;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                const errMsg = errorData.error?.message || `Error status: ${response.status}`;
+                throw new Error(errMsg);
+            }
+
+            const data = await response.json();
+            
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                let reply = data.candidates[0].content.parts[0].text;
+                // Format response a bit
+                reply = reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // bold support
+                aiResponseText.innerHTML = `<strong>AuraCare AI:</strong> ${reply}`;
+            } else {
+                throw new Error("Invalid response structure from Gemini API");
+            }
+        } catch (error) {
+            console.error("API Call Error Details:", error);
+            aiResponseText.innerHTML = `
+                <div class="text-left text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200">
+                    <p class="font-bold mb-1">দুঃখিত দাদু, একটু সমস্যা হয়েছে।</p>
+                    <p class="text-xs">ত্রুটির বিবরণ: <code class="bg-amber-100 p-0.5 rounded text-rose-700 font-mono">${error.message}</code></p>
+                    <p class="text-[10px] mt-1 text-slate-500">টিপস: ইন্টারনেট সংযোগ বা এপিআই কি সঠিক আছে কি না চেক করুন।</p>
+                </div>
+            `;
+        }
+    }
+
+    // Emergency SOS Trigger
+    function triggerSOS() {
+        const daduName = localStorage.getItem('dadu_name') || "দাদু";
+        const userName = localStorage.getItem('user_name') || "সুমাইয়া";
+        
+        const aiResponseText = document.getElementById('ai-response');
+        aiResponseText.innerHTML = `
+            <div class="bg-red-50 border border-red-200 text-red-800 p-4 rounded-2xl text-center">
+                <p class="font-black text-lg mb-1">🚨 ইমার্জেন্সি এসওএস (SOS) অ্যালার্ট!</p>
+                <p class="text-sm"><strong>${userName}</strong>-কে জরুরি নোটিফিকেশন পাঠানো হচ্ছে এবং <strong>${daduName}</strong> এর নিকটবর্তী ডাক্তারের সাথে যোগাযোগের চেষ্টা করা হচ্ছে।</p>
+            </div>
+        `;
+        
+        // Vibrate if mobile supports it
+        if (navigator.vibrate) {
+            navigator.vibrate([500, 250, 500, 250, 500]);
+        }
+    }
 </script>
 </body>
 </html>
