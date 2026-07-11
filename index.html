@@ -36,14 +36,13 @@
         </div>
 
         <div class="flex flex-col items-center py-2 space-y-4">
-            <button id="talkButton" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-lg">🎤 কথা বলুন</button>
+            <button class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-lg">🎤 কথা বলুন</button>
             <button onclick="triggerSOS()" class="w-28 h-28 bg-red-500 text-white rounded-full font-bold text-lg sos-pulse shadow-xl">QUICK SOS</button>
-            <p id="statusText" class="text-sm text-gray-600 font-medium">স্ট্যাটাস: সক্রিয়</p>
+            <p class="text-sm text-gray-600 font-medium">স্ট্যাটাস: সক্রিয়</p>
         </div>
 
         <div id="aiResponseText" class="p-4 bg-gray-50 rounded-xl text-gray-700 italic border min-h-[50px]">আসসালামু আলাইকুম দাদুভাই/দাদীমা। আজ আপনার শরীর কেমন আছে?</div>
 
-        <!-- Health Report Section -->
         <div>
             <div class="flex justify-between items-center mb-3">
                 <h2 class="font-bold text-lg">📊 আজকের স্বাস্থ্য রিপোর্ট</h2>
@@ -56,7 +55,6 @@
             </div>
         </div>
 
-        <!-- Medicine Section -->
         <div>
             <div class="flex justify-between items-center mb-3">
                 <h2 class="font-bold text-lg">💊 ওষুধের রিমাইন্ডার চার্ট</h2>
@@ -68,7 +66,6 @@
             </table>
         </div>
 
-        <!-- Emergency Section -->
         <div>
             <h2 class="font-bold text-lg mb-3">🏥 জরুরি হাসপাতাল ও অ্যাম্বুলেন্স ডিরেক্টরি</h2>
             <div class="space-y-3">
@@ -84,60 +81,51 @@
         </div>
     </div>
 
+    <div id="editHealthModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6">
+            <h2 class="font-bold text-lg mb-4">📊 স্বাস্থ্য রিপোর্ট আপডেট</h2>
+            <div class="space-y-3">
+                <input type="text" id="editPulse" placeholder="Pulse (bpm)" class="w-full p-2 border rounded">
+                <input type="text" id="editBP" placeholder="Blood Pressure (mmHg)" class="w-full p-2 border rounded">
+                <input type="text" id="editSugar" placeholder="Sugar (mmol/L)" class="w-full p-2 border rounded">
+            </div>
+            <button onclick="saveHealth()" class="w-full bg-blue-600 text-white py-3 rounded-xl mt-4 font-bold">সেভ করুন</button>
+        </div>
+    </div>
+
+    <div id="editMedicineModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6">
+            <h2 class="font-bold text-lg mb-4">💊 ওষুধ আপডেট করুন</h2>
+            <div id="medicineInputs" class="space-y-3"></div>
+            <button onclick="addMedicineField()" class="w-full mt-4 text-blue-600 font-bold border-2 border-dashed border-blue-200 py-2 rounded-xl">➕ নতুন ওষুধ যোগ করুন</button>
+            <button onclick="saveMedicines()" class="w-full bg-blue-600 text-white py-3 rounded-xl mt-4 font-bold">সেভ করুন</button>
+        </div>
+    </div>
+    
+    <!-- Toast message notification element -->
+    <div id="toast" class="hidden fixed bottom-5 left-5 right-5 bg-gray-900 text-white p-4 rounded-xl shadow-lg text-center z-[100]"></div>
+
     <script>
-        // তোমার এপিআই কিগুলো এখানে বসাও
-         const TELEGRAM_BOT_TOKEN = "8849541863:AAGdgsRTcTZ-aO633EBEjB60IDjsU2xtVnY"; 
+        const TELEGRAM_BOT_TOKEN = "8849541863:AAGdgsRTcTZ-aO633EBEjB60IDjsU2xtVnY"; 
         const TELEGRAM_CHAT_ID = "8644571705";
         const GEMINI_API_KEY = "AQ.Ab8RN6KAC0sAmJWGzO8oIntr5nGJLMe52QbBnCl0C0F2ng-Nvw";
-
 
         let userProfile = JSON.parse(localStorage.getItem('userProfile'));
         let medicines = JSON.parse(localStorage.getItem('medicines')) || [{ name: 'Seclo 20mg', time: '08:00 AM', rule: 'খাওয়ার আগে' }];
         let healthData = JSON.parse(localStorage.getItem('healthData')) || { pulse: '৭২', bp: '১২০/৮০', sugar: '৫.৫' };
 
-        // Speech Recognition Setup
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = SpeechRecognition ? new SpeechRecognition() : null;
-        if(recognition) {
-            recognition.lang = 'bn-BD';
-            recognition.onstart = () => document.getElementById('statusText').innerText = "শুনছি...";
-            recognition.onend = () => document.getElementById('statusText').innerText = "স্ট্যাটাস: সক্রিয়";
-            recognition.onresult = async (event) => {
-                const transcript = event.results[0][0].transcript;
-                document.getElementById('aiResponseText').innerText = "আপনি বলেছেন: " + transcript;
-                getAIResponse(transcript);
-            };
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
         }
 
-        document.getElementById('talkButton').onclick = () => {
-            if(recognition) recognition.start();
-            else alert("আপনার ব্রাউজার ভয়েস সাপোর্ট করছে না।");
-        };
-
-        async function getAIResponse(transcript) {
-            const aiResponse = document.getElementById('aiResponseText');
-            aiResponse.innerText = "দাদু, একটু অপেক্ষা করো...";
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `তুমি দাদুর একজন বন্ধুসুলভ হেলথ অ্যাসিস্ট্যান্ট। দাদুর কথা: "${transcript}"। খুব সংক্ষেপে দাদুর সাথে গল্প করো বা কৌতুক শোনাও।` }] }]
-                    })
-                });
-                const data = await response.json();
-                aiResponse.innerText = data.candidates[0].content.parts[0].text;
-            } catch (error) {
-                aiResponse.innerText = "দুঃখিত দাদু, এপিআই কি-তে সমস্যা হচ্ছে।";
-            }
-        }
-
-        // Basic Profile/App Logic
         function checkLoginStatus() {
             if (userProfile) {
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('dashboardSection').classList.remove('hidden');
-                document.getElementById('userDisplay').innerText = `সেটআপ করেছেন: ${userProfile.userName}`;
+                document.getElementById('userDisplay').innerText = `Fazilot nesa এর হেলথ অ্যাসিস্ট্যান্ট (সেটআপ করেছেন: ${userProfile.userName})`;
                 renderAll();
             } else {
                 document.getElementById('loginSection').classList.remove('hidden');
@@ -162,15 +150,77 @@
 
         function logout() { localStorage.clear(); window.location.reload(); }
 
-        // SOS Function
+        function openEditHealth() {
+            document.getElementById('editPulse').value = healthData.pulse;
+            document.getElementById('editBP').value = healthData.bp;
+            document.getElementById('editSugar').value = healthData.sugar;
+            document.getElementById('editHealthModal').classList.remove('hidden');
+        }
+
+        function saveHealth() {
+            healthData = {
+                pulse: document.getElementById('editPulse').value,
+                bp: document.getElementById('editBP').value,
+                sugar: document.getElementById('editSugar').value
+            };
+            localStorage.setItem('healthData', JSON.stringify(healthData));
+            renderAll();
+            document.getElementById('editHealthModal').classList.add('hidden');
+        }
+
+        function renderMedicineTable() {
+            const tbody = document.getElementById('medicineTableBody');
+            tbody.innerHTML = medicines.map(med => `
+                <tr class="border-b">
+                    <td class="py-2 font-bold">${med.name}</td>
+                    <td>${med.time}</td>
+                    <td>${med.rule}</td>
+                </tr>
+            `).join('');
+        }
+
+        function openEditMedicine() {
+            const container = document.getElementById('medicineInputs');
+            container.innerHTML = medicines.map((med, index) => `
+                <div class="border p-3 rounded-lg space-y-2 relative">
+                    <button onclick="removeMedicine(${index})" class="absolute top-2 right-2 text-red-500 font-bold">X</button>
+                    <input type="text" value="${med.name}" onchange="updateMed(${index}, 'name', this.value)" class="w-full font-bold border-b" placeholder="ওষুধের নাম">
+                    <div class="flex gap-2">
+                        <input type="text" value="${med.time}" onchange="updateMed(${index}, 'time', this.value)" class="w-1/2 border-b" placeholder="সময়">
+                        <input type="text" value="${med.rule}" onchange="updateMed(${index}, 'rule', this.value)" class="w-1/2 border-b" placeholder="নিয়ম">
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('editMedicineModal').classList.remove('hidden');
+        }
+
+        function addMedicineField() { medicines.push({ name: '', time: '', rule: '' }); openEditMedicine(); }
+        function removeMedicine(index) { medicines.splice(index, 1); openEditMedicine(); }
+        function updateMed(index, field, value) { medicines[index][field] = value; }
+        function saveMedicines() {
+            localStorage.setItem('medicines', JSON.stringify(medicines));
+            renderMedicineTable();
+            document.getElementById('editMedicineModal').classList.add('hidden');
+        }
+
         async function triggerSOS() {
-            const message = `🚨 EMERGENCY SOS! \nদাদুভাই/দাদীমা বিপদে আছেন!`;
-            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
+            if (TELEGRAM_BOT_TOKEN === "YOUR_BOT_TOKEN_HERE" || TELEGRAM_CHAT_ID === "YOUR_CHAT_ID_HERE") {
+                showToast("টেলিগ্রাম সেটিংস চেক করুন");
+                return;
+            }
+            
+            const message = `🚨 EMERGENCY SOS! \nদাদুভাই/দাদীমা বিপদে আছেন! দয়া করে দ্রুত যোগাযোগ করুন। \nহেলথ অ্যাসিস্ট্যান্ট: ${userProfile ? userProfile.userName : 'Unknown'}`;
+            
             try {
-                await fetch(url);
-                alert("SOS মেসেজ পাঠানো হয়েছে!");
+                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
+                const response = await fetch(url);
+                if (response.ok) {
+                    showToast("জরুরি SOS মেসেজ পাঠানো হয়েছে!");
+                } else {
+                    showToast("মেসেজ পাঠাতে সমস্যা হচ্ছে");
+                }
             } catch (error) {
-                alert("মেসেজ পাঠাতে ব্যর্থ!");
+                showToast("ইন্টারনেট কানেকশন চেক করুন!");
             }
         }
 
