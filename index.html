@@ -36,10 +36,14 @@
         </div>
 
         <div class="flex flex-col items-center py-2 space-y-4">
-            <button class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-lg">🎤 কথা বলুন</button>
-            <button onclick="triggerSOS()" class="w-28 h-28 bg-red-500 text-white rounded-full font-bold text-lg sos-pulse shadow-xl">QUICK SOS</button>
-            <p class="text-sm text-gray-600 font-medium">স্ট্যাটাস: সক্রিয়</p>
-        </div>
+    <!-- এখানে নতুন বাটনটি বসান -->
+    <button onclick="listenForStory()" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-lg">
+        🎤 কথা বলুন
+    </button>
+    
+    <button onclick="triggerSOS()" class="w-28 h-28 bg-red-500 text-white rounded-full font-bold text-lg sos-pulse shadow-xl">QUICK SOS</button>
+    <p class="text-sm text-gray-600 font-medium">স্ট্যাটাস: সক্রিয়</p>
+</div>
 
         <div id="aiResponseText" class="p-4 bg-gray-50 rounded-xl text-gray-700 italic border min-h-[50px]">আসসালামু আলাইকুম দাদুভাই/দাদীমা। আজ আপনার শরীর কেমন আছে?</div>
 
@@ -203,6 +207,99 @@
             document.getElementById('editMedicineModal').classList.add('hidden');
         }
 
+        // রিমাইন্ডার ফাংশন
+        function playReminderVoice(medName, rule) {
+            const msg = new SpeechSynthesisUtterance(`দাদুভাই, ওষুধ খাওয়ার সময় হয়েছে। ${medName}। নিয়ম হলো ${rule}`);
+            msg.lang = 'bn-BD';
+            window.speechSynthesis.speak(msg);
+            
+            if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'MEDICINE_REMINDER',
+                    title: '💊 রিমাইন্ডার',
+                    body: `${medName} খাওয়ার সময় হয়েছে। নিয়ম: ${rule}`
+                });
+            }
+            showToast(`💊 রিমাইন্ডার: ${medName}`);
+        }
+
+        // প্রতি ১ মিনিট অন্তর চেক করার লুপ
+        setInterval(() => {
+            const now = new Date();
+            const currentTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            medicines.forEach(med => {
+                if (med.time === currentTime) {
+                    playReminderVoice(med.name, med.rule);
+                }
+            });
+        }, 60000);
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        function checkLoginStatus() {
+            if (userProfile) {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('dashboardSection').classList.remove('hidden');
+                document.getElementById('userDisplay').innerText = `Fazilot nesa এর হেলথ অ্যাসিস্ট্যান্ট (সেটআপ করেছেন: ${userProfile.userName})`;
+                renderAll();
+            } else {
+                document.getElementById('loginSection').classList.remove('hidden');
+                document.getElementById('dashboardSection').classList.add('hidden');
+            }
+        }
+
+        function renderAll() {
+            renderMedicineTable();
+            document.getElementById('valPulse').innerText = healthData.pulse;
+            document.getElementById('valBP').innerText = healthData.bp;
+            document.getElementById('valSugar').innerText = healthData.sugar;
+        }
+
+        function saveProfile() {
+            const userName = document.getElementById('userName').value;
+            if(!userName) return;
+            userProfile = { userName };
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            checkLoginStatus();
+        }
+
+        function logout() { localStorage.clear(); window.location.reload(); }
+
+        function openEditHealth() {
+            document.getElementById('editPulse').value = healthData.pulse;
+            document.getElementById('editBP').value = healthData.bp;
+            document.getElementById('editSugar').value = healthData.sugar;
+            document.getElementById('editHealthModal').classList.remove('hidden');
+        }
+
+        function saveHealth() {
+            healthData = {
+                pulse: document.getElementById('editPulse').value,
+                bp: document.getElementById('editBP').value,
+                sugar: document.getElementById('editSugar').value
+            };
+            localStorage.setItem('healthData', JSON.stringify(healthData));
+            renderAll();
+            document.getElementById('editHealthModal').classList.add('hidden');
+        }
+
+        function renderMedicineTable() {
+            const tbody = document.getElementById('medicineTableBody');
+            tbody.innerHTML = medicines.map((med, index) => `
+                <tr class="border-b">
+                    <td class="py-2 font-bold">${med.name}</td>
+                    <td>${med.time}</td>
+                    <td>${med.rule}</td>
+                    <td><button onclick="playReminderVoice('${med.name}', '${med.rule}')" class="text-xs bg-blue-100 p-2 rounded-full">🔔</button></td>
+                </tr>
+            `).join('');
+        }
+
         async function triggerSOS() {
             if (TELEGRAM_BOT_TOKEN === "YOUR_BOT_TOKEN_HERE" || TELEGRAM_CHAT_ID === "YOUR_CHAT_ID_HERE") {
                 showToast("টেলিগ্রাম সেটিংস চেক করুন");
@@ -225,6 +322,41 @@
         }
 
         window.onload = checkLoginStatus;
+        // গল্পের লিস্ট
+const stories = [
+    "বাবাঃ জানিস, তোর পড়ালেখার পিছনে আমার কত খরচ হয়? ছেলেঃ হ্যা বাবা, জানি বলেই তো কম কম পড়ালেখা করে তোমার খরচ কমানোর চেষ্টা করি।",
+    "শিক্ষক: আচ্ছা বলতো, ইংরেজিতে ‘I can't do this’ অর্থ কী? ছাত্র: স্যার, আমি এটা পারি না। শিক্ষক: বাহ! খুব সুন্দর, এতক্ষণে একটা কাজের কথা বলেছো।",
+    "মা: কিরে, তুই আয়নার সামনে দাঁড়িয়ে চোখ বন্ধ করে আছিস কেন? ছেলে: মা, আমি দেখতে চাই আমি যখন ঘুমাই, তখন আমি কেমন দেখাই!",
+    "চোর: ওরে বাবা, আমি ভুল করে পুলিশের বাসায় চুরি করতে ঢুকেছি! এখন কী হবে? পুলিশ: কী আর হবে? আমি তো এখন ঘুমাচ্ছি, একটু পরে উঠে হ্যান্ডকাপ পরাচ্ছি!"
+];
+
+// ভয়েস রিকগনিশন সেটাপ
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'bn-BD'; // বাংলা ভাষা
+
+function listenForStory() {
+    const aiResponse = document.getElementById('aiResponseText');
+    aiResponse.innerText = "দাদুভাই, আমি শুনছি... আপনি বলুন 'গল্প বলো'";
+    recognition.start();
+}
+
+// যখন কথা বলা শেষ হবে
+recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.toLowerCase();
+    const aiResponse = document.getElementById('aiResponseText');
+
+    if (transcript.includes("গল্প")) {
+        const randomStory = stories[Math.floor(Math.random() * stories.length)];
+        aiResponse.innerText = randomStory;
+        
+        // গল্পটি পড়ে শোনানো
+        const speech = new SpeechSynthesisUtterance(randomStory);
+        speech.lang = 'bn-BD';
+        window.speechSynthesis.speak(speech);
+    } else {
+        aiResponse.innerText = "আমি বুঝতে পারিনি, দাদুভাই। একটু স্পষ্টভাবে বলুন 'গল্প বলো'";
+    }
+};
     </script>
 </body>
 </html>
